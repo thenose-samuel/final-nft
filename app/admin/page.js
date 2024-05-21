@@ -13,6 +13,7 @@ import {
 } from "@nextui-org/react";
 
 import {
+  AuthDispatchContext,
   AuthStateContext,
   ContractContext,
   WalletContext,
@@ -29,6 +30,8 @@ export default function Admin() {
   const [sellerName, setSellerName] = useState(null);
   const [sellerWallet, setSellerWallet] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const dispatch = useContext(AuthDispatchContext);
 
   useEffect(() => {
     if (user == null) {
@@ -68,6 +71,12 @@ export default function Admin() {
     }
     console.log(code);
     setLoading(false);
+  }
+
+  async function refresh() {
+    setRefreshing(true);
+    await getSellers();
+    setRefreshing(false);
   }
 
   return (
@@ -111,9 +120,20 @@ export default function Admin() {
               >
                 Add Seller
               </Button>
-              <div className="text-indigo-600 font-semibold">
-                Previously added sellers:
+              <div className="flex justify-between">
+                <div className="text-indigo-600 font-semibold">
+                  Previously added sellers:
+                </div>
+                <Button
+                  isLoading={refreshing}
+                  onClick={refresh}
+                  color="default"
+                  className="text-xs"
+                >
+                  refresh
+                </Button>
               </div>
+
               {sellers?.map((element, index) => {
                 return (
                   <div key={index} className="bg-neutral-100 p-2 rounded-lg">
@@ -143,6 +163,11 @@ export default function Admin() {
                       className="w-min"
                       color="danger"
                       onPress={() => {
+                        dispatch({
+                          wallet: null,
+                          user: null,
+                          contract: null,
+                        });
                         router.replace("/");
                       }}
                     >

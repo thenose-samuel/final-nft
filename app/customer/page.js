@@ -57,8 +57,9 @@ export default function Customer() {
       let tokenURI = await contract.methods
         .getTokenURI(wallet, tokenId)
         .call({ from: wallet });
-      let warrantyCard = await fetch(tokenURI);
+      let warrantyCard = await fetch(tokenURI, { mode: "no-cors" });
       let info = await warrantyCard.json();
+      console.log(info);
       warrantyData.push(info);
     });
     return warrantyData;
@@ -71,6 +72,7 @@ export default function Customer() {
       .call({ from: wallet });
     let warranties = data;
     let warrantyData = await getMetadata(warranties);
+    console.log(warrantyData);
     setWarrantyInfo(warrantyData);
     setLoading(false);
   }

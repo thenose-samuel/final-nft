@@ -10,15 +10,24 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import {
+  AuthDispatchContext,
+  AuthStateContext,
+  WalletContext,
+} from "../state/auth";
 import UploadComponent from "../component/UploadComponent";
+import { useRouter } from "next/navigation";
 
 export default function Seller() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
   const [customerWallet, setCustomerWallet] = useState("");
   const [productID, setProductID] = useState("");
   const [expiry, setExpiry] = useState("");
+  const user = useContext(AuthStateContext);
+  const wallet = useContext(WalletContext);
+  const dispatch = useContext(AuthDispatchContext);
+  const router = useRouter();
 
   return (
     <>

@@ -16,9 +16,13 @@ export default function UploadComponent({
 
   const urlPromoRef = useRef();
 
-  async function mintNFT(customerWallet, tokenURI) {
+  async function mintNFT(customerWallet, tokenURI, expireDate) {
+    // const date = new Date(expireDate.toString());
+    let myDate = expireDate.split("-");
+    var newDate = new Date(myDate[2], myDate[1] - 1, myDate[0]);
+    console.log(newDate.getTime());
     await contract.methods
-      .mintNFT(customerWallet, tokenURI)
+      .mintNFT(customerWallet, tokenURI, Math.floor(newDate.getTime() / 1000))
       .send({ from: connectedWallet });
   }
 
@@ -36,6 +40,10 @@ export default function UploadComponent({
       let response = await fetch("https://api.nftport.xyz/v0/files", options);
       let data = await response.json();
       const imgURI = data.ipfs_url;
+      const tokenId = await contract.methods
+        .getCurrentToken()
+        .call({ from: connectedWallet });
+      console.log(Number(tokenId) + 1);
       let metadata = {
         name: "Warranty NFT",
         description: "Minted for a product sold to a customer",
@@ -44,8 +52,10 @@ export default function UploadComponent({
           productId: productId,
           customerWallet: customerWallet,
           expireDate: convertDateToTimestamp(expireDate),
+          tokenId: Number(tokenId) + 1,
         },
       };
+
       options = {
         method: "POST",
         headers: {
@@ -108,7 +118,7 @@ export default function UploadComponent({
             expireDate,
             base64
           );
-          await mintNFT(customerWallet, tokenURI);
+          await mintNFT(customerWallet, tokenURI, expireDate);
           setLoading(false);
         }}
       >
