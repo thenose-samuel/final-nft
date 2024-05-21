@@ -73,6 +73,21 @@ export default function Admin() {
     setLoading(false);
   }
 
+  async function remove(walletAddress) {
+    console.log(walletAddress);
+    let code;
+    setLoading(true);
+    try {
+      code = await contract.methods.removeSeller(walletAddress).send({
+        from: wallet,
+      });
+    } catch (e) {
+      console.log(code);
+    }
+    console.log(code);
+    setLoading(false);
+  }
+
   async function refresh() {
     setRefreshing(true);
     await getSellers();
@@ -137,8 +152,16 @@ export default function Admin() {
               {sellers?.map((element, index) => {
                 return (
                   <div key={index} className="bg-neutral-100 p-2 rounded-lg">
-                    <div className="text-indigo-600">{element.name}</div>
-                    <div className="text-neutral-400 text-sm">
+                    <div className="text-indigo-600">
+                      <span>{element.name}</span>
+                      <span
+                        onClick={() => remove(element.address)}
+                        className="text-red-600 text-xs font-bold ml-2"
+                      >
+                        Delete
+                      </span>
+                    </div>
+                    <div className="text-neutral-400 text-xs">
                       {element.address}
                     </div>
                   </div>
