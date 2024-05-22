@@ -74,7 +74,7 @@ export default function Home() {
             style={{ color: "#f2efce" }}
             className=" mb-5 font-bold text-4xl"
           >
-            A new age warranty system based on the blockchain
+            A new age warranty system based on the blockchain.
           </div>
         </div>
         <div>
